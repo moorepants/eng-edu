@@ -176,7 +176,7 @@ def send_email(recipient, subject, body, path_to_attachment):
 
     FROM = 'Jason K. Moore <jkm@ucdavis.edu>'
     TO = recipient
-    CC = 'jkm@ucdavsi.edu'
+    CC = 'jkm@ucdavis.edu'
 
     msg = MIMEMultipart()
     msg['Subject'] = subject
@@ -187,22 +187,27 @@ def send_email(recipient, subject, body, path_to_attachment):
     msg.attach(MIMEText(body))
 
     part = MIMEBase('application', "octet-stream")
-    part.set_payload(open(path_to_attachment, "rb").read())
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', 'attachment; filename="{0}"'.format(
-        os.path.basename(path_to_attachment)))
-    msg.attach(part)
-
     try:
-        # this may only work (without credentials) when on the campus network
-        server = smtplib.SMTP("smtp.ucdavis.edu", 25)
-        server.ehlo()
-        server.starttls()
-        server.sendmail(FROM, [TO, CC], msg.as_string())
-        server.quit()  # close?
-        print('Successfully sent the mail to: {}'.format(recipient))
-    except:
-        print("Failed to send mail to {}".format(recipient))
+        part.set_payload(open(path_to_attachment, "rb").read())
+    except FileNotFoundError:
+        print("{} did not turn in a reflection.".format(TO))
+    else:
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', 'attachment; filename="{0}"'.format(
+            os.path.basename(path_to_attachment)))
+        msg.attach(part)
+
+        try:
+            # this may only work (without credentials) when on the campus
+            # network
+            server = smtplib.SMTP("smtp.ucdavis.edu", 25)
+            server.ehlo()
+            server.starttls()
+            server.sendmail(FROM, [TO, CC], msg.as_string())
+            server.quit()  # close?
+            print('Successfully sent the mail to: {}'.format(recipient))
+        except:
+            print("Failed to send mail to {}".format(recipient))
 
 
 def send_emails(grades_csv, course, directory):
@@ -253,5 +258,5 @@ if __name__ == "__main__":
 
     generate_pdfs(args.course, args.csv, args.directory)
 
-    #if args.email:
-        #send_emails(args.email, args.course, args.directory)
+    if args.email:
+        send_emails(args.email, args.course, args.directory)
