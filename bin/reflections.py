@@ -146,8 +146,8 @@ def generate_pdfs(course, path_to_csv, path_to_directory):
         with open(rst_file, 'w') as f:
             f.write(rst.format(**data))
         flag = '--latex-preamble="\\usepackage[letterpaper, margin=1in]{geometry}"'
-        os.system("rst2latex.py {} {} {}".format(flag, rst_file, tex_file))
-        os.system("pdflatex -output-directory {} {}".format(path_to_directory,
+        os.system('rst2latex.py {} "{}" "{}"'.format(flag, rst_file, tex_file))
+        os.system('pdflatex -output-directory {} "{}"'.format(path_to_directory,
                                                             tex_file))
 
 
@@ -253,5 +253,5 @@ if __name__ == "__main__":
 
     generate_pdfs(args.course, args.csv, args.directory)
 
-    if args.email:
-        send_emails(args.email, args.course, args.directory)
+    #if args.email:
+        #send_emails(args.email, args.course, args.directory)
