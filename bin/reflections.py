@@ -22,14 +22,14 @@ EMAIL_TEMPLATE = \
 {poor_text}
 I've attached what you wrote for your midterm reflection. You can use this
 information to better prepare for the final exam. If you have any questions
-while studying please either come visit me or the TA in the coming week or ask
-on Piazza. I've also taken into consideration the comments you left for me in
-the reflection. I wish you success!
+while studying please either come visit me or the TA in the coming week. I've
+also taken into consideration the comments you left for me in the reflection. I
+wish you success!
 
 Jason
 
 Jason K. Moore, PhD
-Lecturer, Mechanical and Aerospace Engineering Department
+Faculty, Mechanical and Aerospace Engineering Department
 University of California, Davis
 faculty.engineering.ucdavis.edu/moore
 jkm@ucdavis.edu
