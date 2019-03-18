@@ -5,6 +5,8 @@ This script processes the data collected from an exam reflection collected via
 a Google Form and saved as a CSV file. A PDF is generated containing a summary
 of the student's reflection and it is then optionally emailed to the student.
 
+NOTE : This relies on unique first/last name combinations at the moment.
+
 """
 
 import os
@@ -25,6 +27,8 @@ information to better prepare for the final exam. If you have any questions
 while studying please either come visit me or the TA in the coming week. I've
 also taken into consideration the comments you left for me in the reflection. I
 wish you success!
+
+Sincerely,
 
 Jason
 
@@ -78,6 +82,11 @@ If "other" above please specify.
 --------------------------------
 {lost_per_other}
 """
+
+
+def gen_fname(last_name, first_name):
+        fname = str(last_name).strip().lower() + '-' + str(first_name).strip().lower()
+        return fname.replace(' ', '-')
 
 
 def generate_pdfs(course, path_to_csv, path_to_directory):
@@ -137,18 +146,17 @@ def generate_pdfs(course, path_to_csv, path_to_directory):
                 rst += str(question) + '\n' + '=' * len(question)
                 rst += '\n' + str(answer) + '\n\n'
 
-        rst += END_TEMPLATE
+        base_fname = gen_fname(data['LastName'], data['FirstName'])
 
-        rst_file = os.path.join(path_to_directory,
-                                data['LastName'].lower() + '.rst')
-        tex_file = os.path.join(path_to_directory,
-                                data['LastName'].lower() + '.tex')
+        rst += END_TEMPLATE
+        rst_file = os.path.join(path_to_directory, base_fname + '.rst')
+        tex_file = os.path.join(path_to_directory, base_fname + '.tex')
         with open(rst_file, 'w') as f:
             f.write(rst.format(**data))
         flag = '--latex-preamble="\\usepackage[letterpaper, margin=1in]{geometry}"'
         os.system('rst2latex.py {} "{}" "{}"'.format(flag, rst_file, tex_file))
         os.system('pdflatex -output-directory {} "{}"'.format(path_to_directory,
-                                                            tex_file))
+                                                              tex_file))
 
 
     for globule in ["*.aux", "*.log", "*.out", "*.rst", "*.tex"]:
@@ -239,7 +247,8 @@ def send_emails(grades_csv, course, directory):
         vals = {'poor_text': poor, 'FirstName': row['First Name']}
         body = EMAIL_TEMPLATE.format(**vals)
         subject = '{} Midterm Reflection'.format(course)
-        pdf = os.path.join(directory, row['Last Name'].lower() + '.pdf')
+        base_fname = gen_fname(row['Last Name'], row['First Name'])
+        pdf = os.path.join(directory, base_fname + '.pdf')
         send_email(row['Email'], subject,  body, pdf)
 
 
