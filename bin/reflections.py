@@ -5,7 +5,15 @@ This script processes the data collected from an exam reflection collected via
 a Google Form and saved as a CSV file. A PDF is generated containing a summary
 of the student's reflection and it is then optionally emailed to the student.
 
+Create a CSV file with five columns: "First Name", "Last Name", "Email",
+"Score". The Score column should have their numeric midterm grade.
+
+Create a CSV with the reflection responses.
+
 NOTE : This relies on unique first/last name combinations at the moment.
+
+TODO : Add a flag to test everyting but acutally sending the emails. This is
+important for getting the names to match in the two csv files.
 
 """
 
@@ -37,7 +45,7 @@ Faculty, Mechanical and Aerospace Engineering Department
 University of California, Davis
 faculty.engineering.ucdavis.edu/moore
 jkm@ucdavis.edu
-530-752-4805\
+530-601-9791\
 """
 
 POOR_TEXT = \
@@ -257,9 +265,9 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("course")
-    parser.add_argument("csv")
-    parser.add_argument('directory')
+    parser.add_argument("course", help="Course name, e.g. 'EME 150A'")
+    parser.add_argument("csv", help="Path to reflection response csv file.")
+    parser.add_argument('directory', help="Directory to generate the pdfs.")
     parser.add_argument('-e', '--email', help=("This should be a path to the "
                                                "grades csv file, which will "
                                                "be used to send the emails."))
